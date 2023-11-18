@@ -1,9 +1,17 @@
 # REST API IN GOLANG FOR BOOKS
 
-* Execute
+* Execute in terminal.
 ```bash
 go run .
 ```
+
+* Running with docker.
+```docker
+docker build --tag api-books .
+docker run --name backend-books -p 8080:8080 api-books
+docker start backend-books
+```
+
 
 * Curl's
 
