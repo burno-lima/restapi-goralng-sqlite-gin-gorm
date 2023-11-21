@@ -5,27 +5,18 @@ import (
 	
 	"github.com/gin-gonic/gin"
 	"example.com/RestAPIgo/models"
+	"example.com/RestAPIgo/connector"
 )
-
-type CreateBookInput struct {
-	Title string `json:"title" binding:"required"`
-	Author string `json:"author" binding:"required"`
-}
-
-type UpdateBookInput struct {
-	Title string `json:"title"`
-	Author string `json:"author"`
-}
 
 func FindBooks(c *gin.Context){
 	var books []models.Book
-	models.DB.Find(&books)
+	connector.DB.Find(&books)
 
 	c.JSON(http.StatusOK, gin.H{"data": books})
 }
 
 func CreateBook(c *gin.Context) {
-	var input CreateBookInput
+	var input models.CreateBookInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -33,7 +24,7 @@ func CreateBook(c *gin.Context) {
 	}
 	
 	book := models.Book{Title: input.Title, Author: input.Author}
-	models.DB.Create(&book)
+	connector.DB.Create(&book)
 
 	c.JSON(http.StatusOK, gin.H{"data": book})
 }
@@ -41,7 +32,7 @@ func CreateBook(c *gin.Context) {
 func FindBook(c *gin.Context) {
 	var book models.Book
 
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&book).Error; err != nil{
+	if err := connector.DB.Where("id = ?", c.Param("id")).First(&book).Error; err != nil{
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
@@ -53,31 +44,31 @@ func UpdateBook(c *gin.Context) {
   // Get model if exist
   var book models.Book
 
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&book).Error; err != nil {
+	if err := connector.DB.Where("id = ?", c.Param("id")).First(&book).Error; err != nil {
     c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
     return
   }
 
   // Validate input
-  var input UpdateBookInput
+  var input models.UpdateBookInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
     c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
     return
   }
 
-  models.DB.Model(book).Updates(input)
+  connector.DB.Model(book).Updates(input)
 
   c.JSON(http.StatusOK, gin.H{"data": book})
 }
 
 func DeleteBook(c *gin.Context) {
 	var book models.Book
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&book).Error; err != nil {
+	if err := connector.DB.Where("id = ?", c.Param("id")).First(&book).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 	}
 
-	models.DB.Delete(&book)
+	connector.DB.Delete(&book)
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

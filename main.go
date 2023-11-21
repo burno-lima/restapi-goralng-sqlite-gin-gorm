@@ -3,14 +3,15 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 
-	"example.com/RestAPIgo/models"
+	"example.com/RestAPIgo/connector"
 	"example.com/RestAPIgo/controllers"
 )
 
 func main() {
+
 	r := gin.Default()
 
-	models.ConnectDatabase() 
+	connector.ConnectDatabase()
 
 	r.GET("/books", controllers.FindBooks)
 	r.POST("/books", controllers.CreateBook)
