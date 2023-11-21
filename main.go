@@ -9,6 +9,8 @@ import (
 
 func main() {
 
+	connector.ConnectMongodb()
+
 	r := gin.Default()
 
 	connector.ConnectDatabase()
